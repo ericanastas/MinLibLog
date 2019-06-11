@@ -2,6 +2,10 @@
 
 namespace SampleLibrary
 {
+    /// <summary>
+    /// MinLibLog Logging abstraction class
+    /// </summary>
+    /// <remarks>See https://github.com/aireq/MinLibLog for more information</remarks>
     public class Logger
     {
         private Action<DateTime, int, string, System.Exception, object[]> _logHandler;
