@@ -10,9 +10,10 @@ namespace SampleLibrary
     {
         private Action<DateTime, int, string, System.Exception, object[]> _logHandler;
 
-        private Logger(Action<DateTime, int, string, System.Exception, object[]> logHandler)
+        private Logger(string name, Action<DateTime, int, string, System.Exception, object[]> logHandler)
         {
             _logHandler = logHandler;
+            Name = name ?? string.Empty;
         }
 
         /// <summary>
@@ -56,6 +57,10 @@ namespace SampleLibrary
         /// </summary>
         /// <remarks></remarks>
         public static Func<string, Action<DateTime, int, string, System.Exception, object[]>> LogHandlerProvider { get; set; }
+        /// <summary>
+        /// The name of the logger
+        /// </summary>
+        private string Name { get; }
 
         /// <summary>
         /// Creates a new Logger with the provided name
@@ -66,11 +71,11 @@ namespace SampleLibrary
         {
             if (LogHandlerProvider != null)
             {
-                return new Logger(LogHandlerProvider(name));
+                return new Logger(name, LogHandlerProvider(name));
             }
             else
             {
-                return new Logger(null);
+                return new Logger(name, null);
             }
         }
 
@@ -185,8 +190,6 @@ namespace SampleLibrary
             }
         }
 
-        /// <summary>
-
         /// </summary>
         /// <param name="level">The log level of the event</param>
         /// <param name="message">A message to log as a composite format string</param>
@@ -197,6 +200,7 @@ namespace SampleLibrary
             this.Log(level, message, null, args);
         }
 
+        /// <summary>
         /// <summary>
         /// Logs a trace level event
         /// </summary>
