@@ -111,12 +111,11 @@ namespace SampleApp
 
         private static void Main(string[] args)
         {
+            Console.WriteLine("0) None");
             Console.WriteLine("1) NLog");
             Console.WriteLine("2) Log4Net");
             Console.WriteLine("3) Serilog");
-            Console.WriteLine("Select a logging framework (Enter 1-3): ");
-
-            var key = Console.ReadKey(true);
+            Console.Write("Select a logging framework (Enter 0-3): ");
 
             int selectedLogFramework;
             if (int.TryParse(Console.ReadLine(), out selectedLogFramework))
@@ -139,7 +138,7 @@ namespace SampleApp
                         break;
 
                     default:
-                        Console.WriteLine("Invalid selection!");
+                        Console.WriteLine("No logging framework selected");
                         break;
                 }
 
