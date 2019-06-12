@@ -6,6 +6,11 @@ namespace SampleLibrary
     {
         private static readonly Logger _logger = Logger.GetLogger<TestClass>();
 
+        static TestClass()
+        {
+            Logger.EventLogged += Logger_EventLogged;
+        }
+
         public void TestLogging()
         {
             _logger.Trace("Test Trace message");
@@ -14,6 +19,11 @@ namespace SampleLibrary
             _logger.Warn("Test Warn message");
             _logger.Error("Test Error message");
             _logger.Fatal("Test Fatal message");
+        }
+
+        private static void Logger_EventLogged(object sender, Logger.LogEventArgs e)
+        {
+            Console.WriteLine($"{nameof(Logger)}.{nameof(Logger.EventLogged)} [{e.LogLevel}] {e.Message}");
         }
     }
 }

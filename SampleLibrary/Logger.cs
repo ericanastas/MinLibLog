@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SampleLibrary
 {
@@ -8,13 +9,19 @@ namespace SampleLibrary
     /// <remarks>See https://github.com/aireq/MinLibLog for more information</remarks>
     public class Logger
     {
-        private Action<DateTime, int, string, System.Exception, object[]> _logHandler;
+        private static List<Logger> _loggers = new List<Logger>();
+        private static Func<string, Action<DateTime, int, string, System.Exception, object[]>> _logHandlerProvider;
 
-        private Logger(string name, Action<DateTime, int, string, System.Exception, object[]> logHandler)
+        private Logger(string name)
         {
-            _logHandler = logHandler;
-            Name = name ?? string.Empty;
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            RefreshLogHandler();
         }
+
+        /// <summary>
+        /// Event fires whenever an event is logged from any logger
+        /// </summary>
+        internal static event EventHandler<LogEventArgs> EventLogged;
 
         /// <summary>
         /// The serverity level of a log event
@@ -56,7 +63,27 @@ namespace SampleLibrary
         /// Func delegate that accepts a logger name, and returns an Action delegate that log messages should be sent to.
         /// </summary>
         /// <remarks></remarks>
-        public static Func<string, Action<DateTime, int, string, System.Exception, object[]>> LogHandlerProvider { get; set; }
+        public static Func<string, Action<DateTime, int, string, System.Exception, object[]>> LogHandlerProvider
+        {
+            get
+            {
+                return _logHandlerProvider;
+            }
+
+            set
+            {
+                if (_logHandlerProvider != value)
+                {
+                    _logHandlerProvider = value;
+
+                    //Refreshes LogHandler for all Loggers
+                    foreach (var logger in _loggers) logger.RefreshLogHandler();
+                }
+            }
+        }
+
+        private Action<DateTime, int, string, System.Exception, object[]> LogHandler { get; set; }
+
         /// <summary>
         /// The name of the logger
         /// </summary>
@@ -69,14 +96,9 @@ namespace SampleLibrary
         /// <returns>A Logger instance with the provided name</returns>
         internal static Logger GetLogger(string name)
         {
-            if (LogHandlerProvider != null)
-            {
-                return new Logger(name, LogHandlerProvider(name));
-            }
-            else
-            {
-                return new Logger(name, null);
-            }
+            var logger = new Logger(name);
+            _loggers.Add(logger);
+            return logger;
         }
 
         /// <summary>
@@ -177,19 +199,33 @@ namespace SampleLibrary
             Log(LogLevel.Info, message, exception, args);
         }
 
-        /// </summary>
+        ///<summary>
+        /// Logs an event
+        ///</summary>
         /// <param name="level">The log level of the event</param>
         /// <param name="message">A message to log as a composite format string</param>
         /// <param name="exception">An exception to associate with the log event</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         internal void Log(LogLevel level, string message, System.Exception exception, params object[] args)
         {
-            if (_logHandler != null)
+            var timeStamp = DateTime.Now;
+
+            if (LogHandler != null)
             {
-                _logHandler(DateTime.Now, (int)level, message, exception, args);
+                LogHandler(timeStamp, (int)level, message, exception, args);
+            }
+
+            var eventLoggedHandler = EventLogged;
+
+            if (eventLoggedHandler != null)
+            {
+                LogEventArgs logEventArgs = new LogEventArgs(this.Name, timeStamp, level, message, exception);
+                eventLoggedHandler.Invoke(null, logEventArgs);
             }
         }
 
+        /// <summary>
+        /// Logs an event
         /// </summary>
         /// <param name="level">The log level of the event</param>
         /// <param name="message">A message to log as a composite format string</param>
@@ -200,7 +236,6 @@ namespace SampleLibrary
             this.Log(level, message, null, args);
         }
 
-        /// <summary>
         /// <summary>
         /// Logs a trace level event
         /// </summary>
@@ -241,6 +276,37 @@ namespace SampleLibrary
         internal void Warn(string message, Exception exception, params object[] args)
         {
             Log(LogLevel.Warn, message, exception, args);
+        }
+
+        /// <summary>
+        /// Refresh the LogHandler from the current LogHandlerProvider
+        /// </summary>
+        private void RefreshLogHandler()
+        {
+            if (LogHandlerProvider != null) LogHandler = LogHandlerProvider(Name);
+            else LogHandler = null;
+        }
+
+        /// <summary>
+        /// EventArgs used the Logger.EventLogged event
+        /// </summary>
+        internal class LogEventArgs : EventArgs
+        {
+            public LogEventArgs(string loggerName, DateTime timeStamp, LogLevel logLevel, string message, System.Exception exception)
+            {
+                this.LoggerName = loggerName ?? throw new ArgumentNullException(nameof(loggerName));
+                this.TimeStamp = timeStamp;
+                this.LogLevel = logLevel;
+                this.Message = message;
+                this.Exception = exception;
+            }
+
+            public System.Exception Exception { get; }
+            public string LoggerName { get; }
+            public LogLevel LogLevel { get; }
+
+            public string Message { get; }
+            public DateTime TimeStamp { get; }
         }
     }
 }
