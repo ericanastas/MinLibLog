@@ -9,7 +9,7 @@ namespace SampleLibrary
     /// <remarks>See https://github.com/aireq/MinLibLog for more information</remarks>
     public class Logger
     {
-        private static List<Logger> _loggers = new List<Logger>();
+        private static IDictionary<string, Logger> _loggers = new Dictionary<string, Logger>();
         private static Func<string, Action<DateTime, int, string, System.Exception>> _logHandlerProvider;
 
         private Logger(string name)
@@ -77,7 +77,7 @@ namespace SampleLibrary
                     _logHandlerProvider = value;
 
                     //Refreshes LogHandler for all Loggers
-                    foreach (var logger in _loggers) logger.RefreshLogHandler();
+                    foreach (var logger in _loggers.Values) logger.RefreshLogHandler();
                 }
             }
         }
@@ -98,9 +98,12 @@ namespace SampleLibrary
         /// <returns>A Logger instance with the provided name</returns>
         internal static Logger GetLogger(string name)
         {
+            if (_loggers.ContainsKey(name))
+        {
             var logger = new Logger(name);
-            _loggers.Add(logger);
-            return logger;
+                _loggers.Add(logger.Name, logger);
+            }
+            return _loggers[name];
         }
 
         /// <summary>
@@ -109,7 +112,7 @@ namespace SampleLibrary
         /// <remarks>Logger name will equal the full name of the type</remarks>
         /// <typeparam name="T"></typeparam>
         /// <returns>A Logger named the full name of the type T</returns>
-        internal static Logger GetLogger<T>()
+        internal static Logger GetLoggerFor<T>()
         {
             var type = typeof(T);
             return GetLogger(type.FullName);

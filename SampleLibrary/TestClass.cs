@@ -4,7 +4,7 @@ namespace SampleLibrary
 {
     public class TestClass
     {
-        private static readonly Logger _logger = Logger.GetLogger<TestClass>();
+        private static readonly Logger _logger = Logger.GetLoggerFor<TestClass>();
 
         static TestClass()
         {
