@@ -10,7 +10,7 @@ namespace SampleLibrary
     public class Logger
     {
         private static List<Logger> _loggers = new List<Logger>();
-        private static Func<string, Action<DateTime, int, string, System.Exception, object[]>> _logHandlerProvider;
+        private static Func<string, Action<DateTime, int, string, System.Exception>> _logHandlerProvider;
 
         private Logger(string name)
         {
@@ -63,7 +63,7 @@ namespace SampleLibrary
         /// Func delegate that accepts a logger name, and returns an Action delegate that log messages should be sent to.
         /// </summary>
         /// <remarks></remarks>
-        public static Func<string, Action<DateTime, int, string, System.Exception, object[]>> LogHandlerProvider
+        public static Func<string, Action<DateTime, int, string, System.Exception>> LogHandlerProvider
         {
             get
             {
@@ -82,7 +82,9 @@ namespace SampleLibrary
             }
         }
 
-        private Action<DateTime, int, string, System.Exception, object[]> LogHandler { get; set; }
+        public static IFormatProvider MessageFormatProvider { get; set; }
+
+        private Action<DateTime, int, string, System.Exception> LogHandler { get; set; }
 
         /// <summary>
         /// The name of the logger
@@ -208,19 +210,27 @@ namespace SampleLibrary
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         internal void Log(LogLevel level, string message, System.Exception exception, params object[] args)
         {
-            var timeStamp = DateTime.Now;
-
-            if (LogHandler != null)
+            if (LogHandler != null | EventLogged != null)
             {
-                LogHandler(timeStamp, (int)level, message, exception, args);
-            }
+                var timeStamp = DateTime.Now;
 
-            var eventLoggedHandler = EventLogged;
+                //Format
+                string formattedMessage;
+                if (MessageFormatProvider == null) formattedMessage = string.Format(message, args);
+                else formattedMessage = string.Format(MessageFormatProvider, message, args);
 
-            if (eventLoggedHandler != null)
-            {
-                LogEventArgs logEventArgs = new LogEventArgs(this.Name, timeStamp, level, message, exception);
-                eventLoggedHandler.Invoke(null, logEventArgs);
+                if (LogHandler != null)
+                {
+                    LogHandler(timeStamp, (int)level, formattedMessage, exception);
+                }
+
+                var eventLoggedHandler = EventLogged;
+
+                if (eventLoggedHandler != null)
+                {
+                    LogEventArgs logEventArgs = new LogEventArgs(this.Name, timeStamp, level, formattedMessage, exception);
+                    eventLoggedHandler.Invoke(null, logEventArgs);
+                }
             }
         }
 

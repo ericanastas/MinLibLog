@@ -18,13 +18,13 @@ namespace SampleApp
                     NLog.LogLevel.Error,
                     NLog.LogLevel.Fatal };
 
-        private static Action<DateTime, int, string, Exception, object[]> NLogLogHandlerProvider(string loggerName)
+        private static Action<DateTime, int, string, Exception> NLogLogHandlerProvider(string loggerName)
         {
             var nLogLogger = NLog.LogManager.GetLogger(loggerName);
 
-            return new Action<DateTime, int, string, Exception, object[]>(delegate (DateTime timeStamp, int logLevel, string message, Exception exception, object[] args)
+            return new Action<DateTime, int, string, Exception>(delegate (DateTime timeStamp, int logLevel, string message, Exception exception)
             {
-                NLog.LogEventInfo logEvent = new NLog.LogEventInfo(_nLogLogLevelArray[logLevel], loggerName, System.Globalization.CultureInfo.InvariantCulture, message, args);
+                NLog.LogEventInfo logEvent = new NLog.LogEventInfo(_nLogLogLevelArray[logLevel], loggerName, message);
                 logEvent.TimeStamp = timeStamp;
                 nLogLogger.Log(logEvent);
             });
@@ -45,11 +45,11 @@ namespace SampleApp
                     Serilog.Events.LogEventLevel.Error,
                     Serilog.Events.LogEventLevel.Fatal };
 
-        private static Action<DateTime, int, string, Exception, object[]> SerilogLogHandlerProvider(string loggerName)
+        private static Action<DateTime, int, string, Exception> SerilogLogHandlerProvider(string loggerName)
         {
             var seriLogLogger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().WriteTo.File("serilog\\serilog.log").CreateLogger();
 
-            return new Action<DateTime, int, string, Exception, object[]>(delegate (DateTime timeStamp, int logLevel, string message, Exception exception, object[] args)
+            return new Action<DateTime, int, string, Exception>(delegate (DateTime timeStamp, int logLevel, string message, Exception exception)
             {
                 DateTimeOffset timeStampOffset = new DateTimeOffset(timeStamp);
 
@@ -80,7 +80,7 @@ namespace SampleApp
 
         private static log4net.Repository.ILoggerRepository _log4netLogRepo;
 
-        private static Action<DateTime, int, string, Exception, object[]> Log4NetLogHandlerProvider(string loggerName)
+        private static Action<DateTime, int, string, Exception> Log4NetLogHandlerProvider(string loggerName)
         {
             if (_log4netLogRepo == null)
             {
@@ -90,15 +90,14 @@ namespace SampleApp
 
             var log4netLogger = _log4netLogRepo.GetLogger(loggerName);
 
-            return new Action<DateTime, int, string, Exception, object[]>(delegate (DateTime timeStamp, int logLevel, string message, Exception exception, object[] args)
+            return new Action<DateTime, int, string, Exception>(delegate (DateTime timeStamp, int logLevel, string message, Exception exception)
             {
                 log4net.Core.LoggingEventData logEventData = new log4net.Core.LoggingEventData();
 
                 logEventData.Level = _log4NetLogLevelArray[logLevel];
                 logEventData.TimeStampUtc = timeStamp.ToUniversalTime();
 
-                if (args != null) logEventData.Message = string.Format(message, args);
-                else logEventData.Message = message;
+                logEventData.Message = message;
 
                 if (exception != null) logEventData.ExceptionString = exception.ToString();
 
@@ -124,17 +123,17 @@ namespace SampleApp
                 {
                     case 1:
                         Console.WriteLine("NLog logging framework selected");
-                        SampleLibrary.Logger.LogHandlerProvider = new Func<string, Action<DateTime, int, string, Exception, object[]>>(NLogLogHandlerProvider);
+                        SampleLibrary.Logger.LogHandlerProvider = new Func<string, Action<DateTime, int, string, Exception>>(NLogLogHandlerProvider);
                         break;
 
                     case 2:
                         Console.WriteLine("log4net logging framework selected");
-                        SampleLibrary.Logger.LogHandlerProvider = new Func<string, Action<DateTime, int, string, Exception, object[]>>(Log4NetLogHandlerProvider);
+                        SampleLibrary.Logger.LogHandlerProvider = new Func<string, Action<DateTime, int, string, Exception>>(Log4NetLogHandlerProvider);
                         break;
 
                     case 3:
                         Console.WriteLine("serilog logging framework selected");
-                        SampleLibrary.Logger.LogHandlerProvider = new Func<string, Action<DateTime, int, string, Exception, object[]>>(SerilogLogHandlerProvider);
+                        SampleLibrary.Logger.LogHandlerProvider = new Func<string, Action<DateTime, int, string, Exception>>(SerilogLogHandlerProvider);
                         break;
 
                     default:
