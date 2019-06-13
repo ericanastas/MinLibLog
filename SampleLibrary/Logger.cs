@@ -96,7 +96,7 @@ namespace SampleLibrary
         /// <returns>A Logger instance with the provided name</returns>
         internal static Logger GetLogger(string name)
         {
-            if (_loggers.ContainsKey(name))
+            if (_loggers.ContainsKey(name) == false)
             {
                 var logger = new Logger(name);
                 _loggers.Add(logger.Name, logger);
