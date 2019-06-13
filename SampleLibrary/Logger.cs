@@ -82,8 +82,6 @@ namespace SampleLibrary
             }
         }
 
-        public static IFormatProvider MessageFormatProvider { get; set; }
-
         private Action<DateTime, int, string, System.Exception> LogHandler { get; set; }
 
         /// <summary>
@@ -99,8 +97,8 @@ namespace SampleLibrary
         internal static Logger GetLogger(string name)
         {
             if (_loggers.ContainsKey(name))
-        {
-            var logger = new Logger(name);
+            {
+                var logger = new Logger(name);
                 _loggers.Add(logger.Name, logger);
             }
             return _loggers[name];
@@ -218,21 +216,19 @@ namespace SampleLibrary
                 var timeStamp = DateTime.Now;
 
                 //Format
-                string formattedMessage;
-                if (MessageFormatProvider == null) formattedMessage = string.Format(message, args);
-                else formattedMessage = string.Format(MessageFormatProvider, message, args);
+                string formattedMessage = string.Format(message, args);
 
-                if (LogHandler != null)
-                {
-                    LogHandler(timeStamp, (int)level, formattedMessage, exception);
-                }
-
+                //Fires EventLogged Event
                 var eventLoggedHandler = EventLogged;
-
                 if (eventLoggedHandler != null)
                 {
                     LogEventArgs logEventArgs = new LogEventArgs(this.Name, timeStamp, level, formattedMessage, exception);
                     eventLoggedHandler.Invoke(null, logEventArgs);
+                }
+
+                if (LogHandler != null)
+                {
+                    LogHandler(timeStamp, (int)level, formattedMessage, exception);
                 }
             }
         }
