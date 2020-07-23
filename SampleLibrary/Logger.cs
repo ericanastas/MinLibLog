@@ -117,89 +117,111 @@ namespace SampleLibrary
         }
 
         /// <summary>
-        /// Logs a debug level event
+        /// Logs a Debug level event
         /// </summary>
         /// <param name="message">A message to log as a composite format string</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         internal void Debug(string message, params object[] args)
         {
-            Log(LogLevel.Debug, message, args);
+            Log(LogLevel.Debug, message, (DateTime?)null, (Exception)null, args);
         }
 
         /// <summary>
-        /// Logs a debug level event
+        /// Logs a Error level event
+        /// </summary>
+        /// <param name="message">A message to log as a composite format string</param>
+        /// <param name="timeStamp">The timestamp of the event</param>
+        /// <param name="exception">An exception to associate with the log event</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
+        internal void Error(string message, DateTime timeStamp, System.Exception exception, params object[] args)
+        {
+            Log(LogLevel.Error, message, timeStamp, exception, args);
+        }
+
+        /// <summary>
+        /// Logs a Error level event
         /// </summary>
         /// <param name="message">A message to log as a composite format string</param>
         /// <param name="exception">An exception to associate with the log event</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
-        internal void Debug(string message, Exception exception, params object[] args)
+        internal void Error(string message, System.Exception exception, params object[] args)
         {
-            Log(LogLevel.Debug, message, exception, args);
+            Log(LogLevel.Error, message, null, exception, args);
         }
 
         /// <summary>
-        /// Logs a error level event
+        /// Logs a Error level event
+        /// </summary>
+        /// <param name="message">A message to log as a composite format string</param>
+        /// <param name="timeStamp">The timestamp of the event</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
+        internal void Error(string message, DateTime timeStamp, params object[] args)
+        {
+            Log(LogLevel.Error, message, timeStamp, (Exception)null, args);
+        }
+
+        /// <summary>
+        /// Logs a Error level event
         /// </summary>
         /// <param name="message">A message to log as a composite format string</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         internal void Error(string message, params object[] args)
         {
-            Log(LogLevel.Error, message, args);
-        }
-
-        /// <summary>
-        /// Logs a error level event
-        /// </summary>
-        /// <param name="message">A message to log as a composite format string</param>
-        /// <param name="exception">An exception to associate with the log event</param>
-        /// <param name="args">An object array that contains zero or more objects to format.</param>
-        internal void Error(string message, Exception exception, params object[] args)
-        {
-            Log(LogLevel.Error, message, exception, args);
+            Log(LogLevel.Error, message, (DateTime?)null, (Exception)null, args);
         }
 
         /// <summary>
         /// Logs a fatal level event
+        /// </summary>
+        /// <param name="message">A message to log as a composite format string</param>
+        /// <param name="timeStamp">The timestamp of the event</param>
+        /// <param name="exception">An exception to associate with the log event</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
+        internal void Fatal(string message, DateTime timeStamp, System.Exception exception, params object[] args)
+        {
+            Log(LogLevel.Fatal, message, timeStamp, exception, args);
+        }
+
+        /// <summary>
+        /// Logs a fatal level event
+        /// </summary>
+        /// <param name="message">A message to log as a composite format string</param>
+        /// <param name="exception">An exception to associate with the log event</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
+        internal void Fatal(string message, System.Exception exception, params object[] args)
+        {
+            Log(LogLevel.Fatal, message, null, exception, args);
+        }
+
+        /// <summary>
+        /// Logs a fatal level event
+        /// </summary>
+        /// <param name="message">A message to log as a composite format string</param>
+        /// <param name="timeStamp">The timestamp of the event</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
+        internal void Fatal(string message, DateTime timeStamp, params object[] args)
+        {
+            Log(LogLevel.Fatal, message, timeStamp, (Exception)null, args);
+        }
+
+        /// <summary>
+        /// Logs a Fatal level event
         /// </summary>
         /// <param name="message">A message to log as a composite format string</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         internal void Fatal(string message, params object[] args)
         {
-            Log(LogLevel.Fatal, message, args);
+            Log(LogLevel.Fatal, message, (DateTime?)null, (Exception)null, args);
         }
 
         /// <summary>
-        /// Logs a fatal level event
-        /// </summary>
-        /// <param name="message">A message to log as a composite format string</param>
-        /// <param name="exception">An exception to associate with the log event</param>
-        /// <param name="args">An object array that contains zero or more objects to format.</param>
-        internal void Fatal(string message, Exception exception, params object[] args)
-        {
-            Log(LogLevel.Fatal, message, exception, args);
-        }
-
-        /// <summary>
-        /// Logs a info level event
+        /// Logs a Info level event
         /// </summary>
         /// <param name="message">A message to log as a composite format string</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         internal void Info(string message, params object[] args)
         {
-            Log(LogLevel.Info, message, args);
-        }
-
-        /// <summary>
-        /// Logs a info level event
-        /// <summary>
-        /// Logs a info level event
-        /// </summary>
-        /// <param name="message">A message to log as a composite format string</param>
-        /// <param name="exception">An exception to associate with the log event</param>
-        /// <param name="args">An object array that contains zero or more objects to format.</param>
-        internal void Info(string message, Exception exception, params object[] args)
-        {
-            Log(LogLevel.Info, message, exception, args);
+            Log(LogLevel.Info, message, (DateTime?)null, (Exception)null, args);
         }
 
         ///<summary>
@@ -209,11 +231,39 @@ namespace SampleLibrary
         /// <param name="message">A message to log as a composite format string</param>
         /// <param name="exception">An exception to associate with the log event</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
-        internal void Log(LogLevel level, string message, System.Exception exception, params object[] args)
+        internal void Log(string message, LogLevel level, System.Exception exception, params object[] args)
+        {
+            Log(level, message, null, exception, args);
+        }
+
+        ///<summary>
+        /// Logs an event
+        ///</summary>
+        /// <param name="level">The log level of the event</param>
+        /// <param name="message">A message to log as a composite format string</param>
+        /// <param name="timeStamp">The timestamp of the event</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
+        internal void Log(string message, LogLevel level, DateTime timeStamp, params object[] args)
+        {
+            Log(level, message, timeStamp, (Exception)null, args);
+        }
+
+        ///<summary>
+        /// Logs an event
+        ///</summary>
+        /// <param name="level">The log level of the event</param>
+        /// <param name="message">A message to log as a composite format string</param>
+        /// <param name="timeStamp">The timestamp of the event</param>
+        /// <param name="exception">An exception to associate with the log event</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
+        internal void Log(LogLevel level, string message, DateTime? timeStamp, System.Exception exception, params object[] args)
         {
             if (LogHandler != null | EventLogged != null)
             {
-                var timeStamp = DateTime.Now;
+                DateTime ts;
+
+                if (timeStamp.HasValue) ts = timeStamp.Value;
+                else ts = DateTime.Now;
 
                 //Format
                 string formattedMessage = string.Format(message, args);
@@ -222,69 +272,103 @@ namespace SampleLibrary
                 var eventLoggedHandler = EventLogged;
                 if (eventLoggedHandler != null)
                 {
-                    LogEventArgs logEventArgs = new LogEventArgs(this.Name, timeStamp, level, formattedMessage, exception);
+                    LogEventArgs logEventArgs = new LogEventArgs(this.Name, ts, level, formattedMessage, exception);
                     eventLoggedHandler.Invoke(null, logEventArgs);
                 }
 
                 if (LogHandler != null)
                 {
-                    LogHandler(timeStamp, (int)level, formattedMessage, exception);
+                    LogHandler(ts, (int)level, formattedMessage, exception);
                 }
             }
         }
 
         /// <summary>
-        /// Logs an event
+        /// Logs a Trace level event
         /// </summary>
-        /// <param name="level">The log level of the event</param>
         /// <param name="message">A message to log as a composite format string</param>
-        /// <param name="exception">A log message to associate with</param>
+        /// <param name="timeStamp">The timestamp of the event</param>
+        /// <param name="exception">An exception to associate with the log event</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
-        internal void Log(LogLevel level, string message, params object[] args)
+        internal void Trace(string message, DateTime timeStamp, System.Exception exception, params object[] args)
         {
-            this.Log(level, message, null, args);
+            Log(LogLevel.Debug, message, timeStamp, exception, args);
         }
 
         /// <summary>
-        /// Logs a trace level event
+        /// Logs a Trace level event
+        /// </summary>
+        /// <param name="message">A message to log as a composite format string</param>
+        /// <param name="exception">An exception to associate with the log event</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
+        internal void Trace(string message, System.Exception exception, params object[] args)
+        {
+            Log(LogLevel.Debug, message, null, exception, args);
+        }
+
+        /// <summary>
+        /// Logs a Trace level event
+        /// </summary>
+        /// <param name="message">A message to log as a composite format string</param>
+        /// <param name="timeStamp">The timestamp of the event</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
+        internal void Trace(string message, DateTime timeStamp, params object[] args)
+        {
+            Log(LogLevel.Debug, message, timeStamp, (Exception)null, args);
+        }
+
+        /// <summary>
+        /// Logs a Trace level event
         /// </summary>
         /// <param name="message">A message to log as a composite format string</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         internal void Trace(string message, params object[] args)
         {
-            Log(LogLevel.Trace, message, args);
+            Log(LogLevel.Debug, message, (DateTime?)null, (Exception)null, args);
         }
 
         /// <summary>
-        /// Logs a trace level event
-        /// </summary>
-        /// <param name="message">A message to log as a composite format string</param>
-        /// <param name="exception">An exception to associate with the log event</param>
-        /// <param name="args">An object array that contains zero or more objects to format.</param>
-        internal void Trace(string message, Exception exception, params object[] args)
-        {
-            Log(LogLevel.Trace, message, exception, args);
-        }
-
-        /// <summary>
-        /// Logs a warn level event
+        /// Logs a Warn level event
         /// </summary>
         /// <param name="message">A message to log as a composite format string</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         internal void Warn(string message, params object[] args)
         {
-            Log(LogLevel.Warn, message, args);
+            Log(LogLevel.Warn, message, (DateTime?)null, (Exception)null, args);
         }
 
         /// <summary>
-        /// Logs a warn level event
+        /// Logs a Warn level event
+        /// </summary>
+        /// <param name="message">A message to log as a composite format string</param>
+        /// <param name="timeStamp">The timestamp of the event</param>
+        /// <param name="exception">An exception to associate with the log event</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
+        internal void Warn(string message, DateTime timeStamp, System.Exception exception, params object[] args)
+        {
+            Log(LogLevel.Warn, message, timeStamp, exception, args);
+        }
+
+        /// <summary>
+        /// Logs a Error level event
         /// </summary>
         /// <param name="message">A message to log as a composite format string</param>
         /// <param name="exception">An exception to associate with the log event</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
-        internal void Warn(string message, Exception exception, params object[] args)
+        internal void Warn(string message, System.Exception exception, params object[] args)
         {
-            Log(LogLevel.Warn, message, exception, args);
+            Log(LogLevel.Warn, message, null, exception, args);
+        }
+
+        /// <summary>
+        /// Logs a Error level event
+        /// </summary>
+        /// <param name="message">A message to log as a composite format string</param>
+        /// <param name="timeStamp">The timestamp of the event</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
+        internal void Warn(string message, DateTime timeStamp, params object[] args)
+        {
+            Log(LogLevel.Warn, message, timeStamp, (Exception)null, args);
         }
 
         /// <summary>
